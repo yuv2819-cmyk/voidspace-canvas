@@ -1,66 +1,51 @@
-# SaaS Note App
+# Voidspace Canvas
 
-Production-oriented SaaS notes starter with:
-- Next.js 16 (App Router)
-- Prisma + SQLite
-- NextAuth credentials authentication
-- Per-user note ownership
-- Stripe billing foundation (checkout, portal, webhook)
+A dark, node-based workspace for arranging text, quotes, code, images, and todos on a directed graph.
 
-## Requirements
-- Node.js 20+
-- npm 9+
+Built as an MVP visual canvas — closer to a spatial notebook than a notes CRUD app.
 
-## Local Setup
-1. Install dependencies:
-   ```bash
-   npm install
-   ```
-2. Prepare environment:
-   ```bash
-   copy .env.example .env.local
-   ```
-3. Set required values in `.env.local`:
-   - `NEXTAUTH_SECRET` (required)
-   - Stripe keys/prices (optional unless testing billing)
-4. Setup database:
-   ```bash
-   npm run db:setup
-   ```
-5. Start app:
-   ```bash
-   npm run dev
-   ```
-6. Open `http://localhost:3000`.
+**Live:** [voidspace-canvas.vercel.app](https://voidspace-canvas.vercel.app) · canvas lives at `/voidspace`
 
-## Auth Flow
-- Register from the home page.
-- Sign in with credentials.
-- Notes API is protected and scoped to the signed-in user.
+## What works today
 
-## Billing Flow (Optional)
-- `POST /api/billing/checkout` starts Stripe subscription checkout (`PRO`/`TEAM`).
-- `POST /api/billing/portal` opens Stripe billing portal.
-- `POST /api/stripe/webhook` syncs subscription status.
+- Full-screen React Flow canvas (pan, zoom, select)
+- Node types: Text, Quote, Code, Image, Todo
+- Directed edges with labels
+- Inline edit + inspector (title, size, edge label)
+- Resize handles with min/max constraints
+- Undo / redo
+- Dark / light toggle, grid on/off
+- Save / load + debounced autosave via `PUT/GET /api/workflows/:id`
+- File-backed store under `.voidspace/workflows`
 
-Required env vars for billing:
-- `STRIPE_SECRET_KEY`
-- `STRIPE_WEBHOOK_SECRET`
-- `STRIPE_PRICE_PRO_MONTHLY`
-- `STRIPE_PRICE_TEAM_MONTHLY`
+Not built yet: multi-user auth, execution engine, collaboration, version history beyond in-session undo.
 
-## Scripts
-- `npm run dev` start dev server
-- `npm run build` production build
-- `npm run start` start production server
-- `npm run lint` run ESLint
-- `npm run db:setup` generate client + push schema
-- `npm run db:generate` generate Prisma client
-- `npm run db:push` sync DB schema
-- `npm run db:studio` open Prisma Studio
+## Stack
 
-## Windows Launcher
-- Double-click `launch-voidspace.bat` to:
-  - install dependencies if needed
-  - start the dev server in a new terminal window
-  - open `http://localhost:3000/voidspace` automatically
+- Next.js App Router + TypeScript
+- React Flow (`@xyflow/react`)
+- Tailwind CSS
+- Next.js API route for persistence
+
+## Run locally
+
+```bash
+npm install
+copy .env.example .env.local
+npm run dev
+```
+
+Open `http://localhost:3000/voidspace`.
+
+Windows: double-click `launch-voidspace.bat`.
+
+## Layout
+
+```text
+src/app/voidspace/page.tsx          canvas route
+src/components/voidspace/           canvas shell + nodes
+src/app/api/workflows/[id]/route.ts persistence
+src/lib/workflow-store.ts           disk store
+```
+
+More detail in [PROJECT_REPORT.md](./PROJECT_REPORT.md).
